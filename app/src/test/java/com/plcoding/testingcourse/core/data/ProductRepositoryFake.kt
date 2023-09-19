@@ -3,7 +3,7 @@ package com.plcoding.testingcourse.core.data
 import com.plcoding.testingcourse.core.domain.Product
 import com.plcoding.testingcourse.core.domain.ProductRepository
 
-class ProductRepositoryFake: ProductRepository {
+class  ProductRepositoryFake: ProductRepository {
 
     private val purchasedProducts = mutableListOf<Product>()
     var shouldReturnError = false
