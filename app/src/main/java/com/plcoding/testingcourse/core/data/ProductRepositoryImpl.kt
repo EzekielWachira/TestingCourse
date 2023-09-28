@@ -15,6 +15,15 @@ class ProductRepositoryImpl(
 
     override suspend fun purchaseProducts(products: List<Product>): Result<Unit> {
         return try {
+
+            val product = Product(
+                id= 1,
+                name = "Milk",
+                price = 2.0
+            )
+
+            println(product.name)
+
             productApi.purchaseProducts(
                 products = ProductsDto(products)
             )
@@ -39,6 +48,26 @@ class ProductRepositoryImpl(
     }
 
     override suspend fun cancelPurchase(purchaseId: Int): Result<Unit> {
-        TODO("Not yet implemented")
+        return try {
+            productApi.cancelPurchase(purchaseId.toString())
+            Result.success(Unit)
+        }  catch (e: HttpException) {
+            analyticsLogger.logEvent(
+                "http_error",
+                LogParam("code", e.code()),
+                LogParam("message", e.message()),
+            )
+            Result.failure(e)
+        } catch(e: IOException) {
+            analyticsLogger.logEvent(
+                "io_error",
+                LogParam("message", e.message.toString())
+            )
+            Result.failure(e)
+        } catch (e: Exception) {
+            if(e is CancellationException) throw e
+            Result.failure(e)
+        }
+
     }
 }
